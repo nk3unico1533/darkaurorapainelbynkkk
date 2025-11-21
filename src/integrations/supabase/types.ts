@@ -95,6 +95,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_moderation: {
+        Row: {
+          action_type: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          moderator_id: string
+          reason: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          moderator_id: string
+          reason?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          moderator_id?: string
+          reason?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -140,6 +176,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_user_banned: { Args: { user_id: string }; Returns: boolean }
       use_credit: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
