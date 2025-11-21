@@ -1,0 +1,296 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 258 90% 6%;
+    --foreground: 270 100% 98%;
+
+    --card: 258 50% 10%;
+    --card-foreground: 270 100% 98%;
+
+    --popover: 258 50% 10%;
+    --popover-foreground: 270 100% 98%;
+
+    --primary: 266 83% 66%;
+    --primary-foreground: 270 100% 98%;
+
+    --secondary: 258 40% 20%;
+    --secondary-foreground: 270 100% 98%;
+
+    --muted: 258 40% 15%;
+    --muted-foreground: 270 40% 70%;
+
+    --accent: 280 91% 68%;
+    --accent-foreground: 270 100% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 270 100% 98%;
+
+    --border: 258 40% 25%;
+    --input: 258 40% 20%;
+    --ring: 266 83% 66%;
+
+    --radius: 1rem;
+
+    --neon-purple: 266 83% 66%;
+    --neon-violet: 280 91% 68%;
+    --neon-fuchsia: 300 76% 68%;
+    --neon-cyan: 190 100% 65%;
+    --neon-pink: 330 81% 68%;
+    
+    --glass-bg: 258 50% 10%;
+    --glass-border: 266 60% 50%;
+    
+    --glow-primary: 266 100% 70%;
+    --glow-secondary: 280 100% 75%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/40 backdrop-blur-xl border border-border/50 shadow-2xl;
+  }
+  
+  .glass-panel-strong {
+    @apply bg-card/60 backdrop-blur-2xl border border-border/70 shadow-2xl;
+  }
+  
+  .neon-glow {
+    box-shadow: 0 0 20px hsl(var(--neon-purple) / 0.5),
+                0 0 40px hsl(var(--neon-purple) / 0.3),
+                0 0 60px hsl(var(--neon-purple) / 0.1);
+  }
+  
+  .neon-glow-strong {
+    box-shadow: 0 0 30px hsl(var(--neon-purple) / 0.7),
+                0 0 60px hsl(var(--neon-purple) / 0.5),
+                0 0 100px hsl(var(--neon-purple) / 0.3);
+  }
+  
+  .neon-border {
+    border-color: hsl(var(--neon-purple) / 0.5);
+    box-shadow: 0 0 15px hsl(var(--neon-purple) / 0.3);
+  }
+  
+  .aurora-bg {
+    background: 
+      radial-gradient(circle at 20% 50%, hsl(var(--neon-purple) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, hsl(var(--neon-violet) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, hsl(var(--neon-fuchsia) / 0.1) 0%, transparent 50%),
+      hsl(var(--background));
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-[hsl(var(--neon-purple))] via-[hsl(var(--neon-violet))] to-[hsl(var(--neon-fuchsia))] bg-clip-text text-transparent;
+  }
+  
+  .rgb-text {
+    background: linear-gradient(
+      90deg, 
+      #00f0ff,
+      #a855f7,
+      #ff0080,
+      #00f0ff
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rgb-shift 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+  }
+  
+  @keyframes rgb-shift {
+    0%, 100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+}
+
+@layer components {
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px hsl(var(--neon-purple) / 0.4),
+                  0 0 40px hsl(var(--neon-purple) / 0.2);
+    }
+    to {
+      box-shadow: 0 0 30px hsl(var(--neon-purple) / 0.6),
+                  0 0 60px hsl(var(--neon-purple) / 0.4),
+                  0 0 100px hsl(var(--neon-purple) / 0.2);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+  }
+  
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  .animate-scale-pulse {
+    animation: scale-pulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes scale-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.4s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .rgb-border {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .rgb-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      90deg,
+      hsl(180, 100%, 50%),
+      hsl(280, 100%, 50%),
+      hsl(330, 100%, 50%),
+      hsl(180, 100%, 50%)
+    );
+    background-size: 300% 100%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: rgb-rotate 3s linear infinite;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    padding: 2px;
+    pointer-events: none;
+  }
+  
+  .rgb-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  @keyframes rgb-rotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { 
+      transform: translateY(20px); 
+      opacity: 0; 
+    }
+    to { 
+      transform: translateY(0); 
+      opacity: 1; 
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
