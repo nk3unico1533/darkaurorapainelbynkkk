@@ -1,28 +1,32 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Coins, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [credits, setCredits] = useState({ creditsRemaining: 0, dailyLimit: 0 });
 
   useEffect(() => {
     if (user) {
-      fetchProfile();
+      loadProfile();
+      loadUserRole();
+      loadCredits();
     }
   }, [user]);
 
-  const fetchProfile = async () => {
+  const loadProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
@@ -31,7 +35,23 @@ const Profile = () => {
 
     if (!error && data) {
       setDisplayName(data.display_name || "");
-      setAvatarUrl(data.avatar_url || "");
+    }
+  };
+
+  const loadUserRole = async () => {
+    if (!user) return;
+    const { data } = await supabase.rpc("get_user_role", { user_id: user.id });
+    setUserRole(data);
+  };
+
+  const loadCredits = async () => {
+    if (!user) return;
+    const { data } = await supabase.rpc("get_user_credits", { user_id: user.id });
+    if (data && data.length > 0) {
+      setCredits({
+        creditsRemaining: data[0].credits_remaining,
+        dailyLimit: data[0].daily_limit,
+      });
     }
   };
 
@@ -42,8 +62,7 @@ const Profile = () => {
     const { error } = await supabase
       .from("profiles")
       .update({
-        display_name: displayName,
-        avatar_url: avatarUrl
+        display_name: displayName
       })
       .eq("id", user?.id);
 
@@ -68,10 +87,49 @@ const Profile = () => {
           Voltar
         </Button>
 
-        <Card className="glass-panel-strong">
+        {/* Credits and Role Card */}
+        <Card className="glass-panel-strong rgb-border mb-6">
           <CardHeader>
-            <CardTitle className="text-2xl gradient-text">Meu Perfil</CardTitle>
-            <CardDescription>Gerencie suas informações pessoais</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Coins className="w-5 h-5 text-neon-purple" />
+              Seus Créditos
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 glass-panel rounded-lg">
+              <div>
+                <p className="text-sm text-muted-foreground">Créditos Restantes</p>
+                <p className="text-3xl font-bold gradient-text">
+                  {credits.creditsRemaining}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Limite Diário</p>
+                <p className="text-3xl font-bold text-foreground">
+                  {credits.dailyLimit}
+                </p>
+              </div>
+            </div>
+            {userRole && (
+              <div className="flex items-center justify-between p-4 glass-panel rounded-lg">
+                <p className="text-sm text-muted-foreground">Seu Plano</p>
+                <Badge variant="default" className="flex items-center gap-1">
+                  {(userRole === "owner" || userRole === "admin" || userRole === "premium") && (
+                    <Crown className="w-3 h-3" />
+                  )}
+                  {userRole.toUpperCase()}
+                </Badge>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel-strong rgb-border">
+          <CardHeader>
+            <CardTitle>Informações do Perfil</CardTitle>
+            <CardDescription>
+              Gerencie suas informações pessoais
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -94,17 +152,6 @@ const Profile = () => {
                   placeholder="Seu nome"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="avatarUrl">URL do Avatar</Label>
-                <Input
-                  id="avatarUrl"
-                  type="url"
-                  placeholder="https://..."
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
                 />
               </div>
 

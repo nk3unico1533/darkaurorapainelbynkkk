@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Sparkles, User, Settings, LogOut, Crown } from "lucide-react";
+import { Sparkles, User, Settings, LogOut, Crown, Shield } from "lucide-react";
 import { SiDiscord, SiInstagram, SiTiktok } from "react-icons/si";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,19 @@ const Header = () => {
   const [userIp, setUserIp] = useState<string>("Carregando...");
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      checkUserRole();
+    }
+  }, [user]);
+
+  const checkUserRole = async () => {
+    if (!user) return;
+    const { data } = await supabase.rpc("get_user_role", { user_id: user.id });
+    setUserRole(data);
+  };
 
   useEffect(() => {
     fetch("https://api.ipify.org?format=json")
@@ -84,6 +98,12 @@ const Header = () => {
                     <Crown className="w-4 h-4 mr-2 text-neon-purple" />
                     Virar VIP
                   </DropdownMenuItem>
+                  {(userRole === "admin" || userRole === "owner") && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <Shield className="w-4 h-4 mr-2" />
+                      Painel Admin
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={() => navigate("/settings")}>
                     <Settings className="w-4 h-4 mr-2" />
                     Configurações
