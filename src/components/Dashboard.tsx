@@ -299,6 +299,26 @@ const Dashboard = () => {
                 onSelectRoute={setSelectedRoute}
               />
 
+              {/* Credits Display in Panel */}
+              {user && creditInfo && !creditsLoading && (
+                <div className="flex items-center justify-between p-4 bg-muted/20 rounded-lg border border-border/50 animate-fade-in">
+                  <div className="flex items-center gap-2">
+                    <Coins className="w-5 h-5 text-amber-500" />
+                    <span className="text-sm font-medium">
+                      Créditos Disponíveis
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-foreground">
+                      {creditInfo.creditsRemaining}/{creditInfo.dailyLimit}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {creditInfo.creditsRemaining === 0 ? 'Sem créditos' : 'Créditos restantes'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <ConsultationInput
                 module={selectedModule}
                 value={inputValue}
