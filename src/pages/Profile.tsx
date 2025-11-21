@@ -6,14 +6,18 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Coins, Crown } from "lucide-react";
+import { ArrowLeft, Coins, Crown, Hash, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
+  const [numericId, setNumericId] = useState<number | null>(null);
+  const [lastUsernameChange, setLastUsernameChange] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [credits, setCredits] = useState({ creditsRemaining: 0, dailyLimit: 0 });
@@ -35,6 +39,9 @@ const Profile = () => {
 
     if (!error && data) {
       setDisplayName(data.display_name || "");
+      setUsername(data.username || "");
+      setNumericId(data.numeric_id);
+      setLastUsernameChange(data.last_username_change);
     }
   };
 
@@ -73,6 +80,42 @@ const Profile = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleUpdateUsername = async () => {
+    if (!user?.id || !username) return;
+    
+    setLoading(true);
+    const { data, error } = await supabase.rpc("update_username", {
+      user_id: user.id,
+      new_username: username
+    }) as { data: any; error: any };
+
+    if (error || (data && !data.success)) {
+      const errorMsg = data?.error || error?.message || "Erro desconhecido";
+      toast.error("Erro ao atualizar username", { 
+        description: errorMsg
+      });
+    } else {
+      toast.success("Username atualizado com sucesso!");
+      loadProfile();
+    }
+
+    setLoading(false);
+  };
+
+  const canChangeUsername = () => {
+    if (!lastUsernameChange) return true;
+    const lastChange = new Date(lastUsernameChange);
+    const daysSince = Math.floor((Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24));
+    return daysSince >= 7;
+  };
+
+  const getDaysUntilChange = () => {
+    if (!lastUsernameChange) return 0;
+    const lastChange = new Date(lastUsernameChange);
+    const daysSince = Math.floor((Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(0, 7 - daysSince);
   };
 
   return (
@@ -124,6 +167,70 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        <Card className="glass-panel-strong rgb-border mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Hash className="w-5 h-5 text-neon-cyan" />
+              Identificação
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 glass-panel rounded-lg">
+                <p className="text-sm text-muted-foreground mb-1">ID Numérico</p>
+                <p className="text-2xl font-bold gradient-text">
+                  #{numericId || "---"}
+                </p>
+              </div>
+              <div className="p-4 glass-panel rounded-lg">
+                <p className="text-sm text-muted-foreground mb-1">Username</p>
+                <p className="text-2xl font-bold text-foreground">
+                  @{username || "não definido"}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel-strong rgb-border mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-neon-purple" />
+              Username
+            </CardTitle>
+            <CardDescription>
+              Você pode alterar seu username a cada 7 dias
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!canChangeUsername() && (
+              <Alert>
+                <AlertDescription>
+                  Você poderá mudar seu username novamente em {getDaysUntilChange()} dias
+                </AlertDescription>
+              </Alert>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="username">Novo Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="seunome123"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={!canChangeUsername()}
+              />
+            </div>
+            <Button 
+              onClick={handleUpdateUsername} 
+              className="w-full" 
+              disabled={loading || !canChangeUsername()}
+            >
+              {loading ? "Salvando..." : "Atualizar Username"}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="glass-panel-strong rgb-border">
           <CardHeader>
             <CardTitle>Informações do Perfil</CardTitle>
@@ -149,7 +256,7 @@ const Profile = () => {
                 <Input
                   id="displayName"
                   type="text"
-                  placeholder="Seu nome"
+                  placeholder="Seu nome completo"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                 />
