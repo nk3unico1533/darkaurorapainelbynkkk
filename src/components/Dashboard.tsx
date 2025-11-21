@@ -234,7 +234,7 @@ const Dashboard = () => {
           {/* Consultation Panel */}
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 animate-slide-in" style={{ animationDelay: "0.2s" }}>
             {/* Input Section */}
-            <div className={`bg-background/20 backdrop-blur-md rgb-border p-4 sm:p-6 md:p-8 rounded-2xl space-y-4 sm:space-y-6 transition-all duration-500 hover:shadow-2xl hover:shadow-neon-purple/20 ${!user ? 'opacity-60 cursor-not-allowed' : ''}`}>
+            <div className={`glass-panel-strong rgb-border p-4 sm:p-6 md:p-8 rounded-2xl space-y-4 sm:space-y-6 transition-all duration-500 hover:shadow-2xl hover:shadow-neon-purple/20 ${!user ? 'opacity-60 cursor-not-allowed' : ''}`}>
               <div className="flex items-center gap-3 pb-3 sm:pb-4 border-b border-border/50 animate-fade-in">
                 <div className="w-2 h-2 rounded-full bg-neon-purple animate-pulse" />
                 <h3 className="font-semibold text-lg sm:text-xl">
