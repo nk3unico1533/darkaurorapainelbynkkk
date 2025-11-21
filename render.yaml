@@ -1,0 +1,26 @@
+# render.yaml para seu painel DarkAurora (exportado do Lovable)
+
+services:
+  - type: web
+    name: darkaurora-painel
+    runtime: node
+    plan: free
+    branch: main  # ou a branch que você usa no GitHub
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: darkaurora-db
+          property: connectionString
+      # Se você tiver outras variáveis de ambiente no seu .env local, adicione aqui:
+      # - key: SENHA_SECRETA
+      #   value: "seu-valor-ou-deixe-sync-false"
+
+databases:
+  - name: darkaurora-db
+    plan: free
+    # Você pode especificar a versão do Postgres se quiser:
+    # postgresMajorVersion: "15"
