@@ -16,10 +16,10 @@ const Footer = () => {
 
           {/* Creator Badge */}
           <div className="glass-panel px-8 py-4 rounded-2xl rgb-border">
-            <div className="flex items-center gap-3">
-              <span className="text-muted-foreground font-mono text-lg">Desenvolvido por</span>
-              <span className="rgb-text font-bold text-4xl">nk</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="text-muted-foreground font-mono text-lg">Desenvolvido por</span>
+            <span className="rgb-text font-bold text-2xl">nk</span>
+          </div>
           </div>
 
           {/* Social Links */}
