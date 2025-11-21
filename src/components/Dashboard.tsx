@@ -6,6 +6,7 @@ import ResultDisplay from "./ResultDisplay";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useCredits } from "@/hooks/useCredits";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { Lock, User, IdCard } from "lucide-react";
+import { Lock, User, IdCard, Coins, Crown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
   const [selectedModule, setSelectedModule] = useState<ModuleType>("cpf");
@@ -28,6 +30,7 @@ const Dashboard = () => {
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const { user } = useAuth();
+  const { creditInfo, loading: creditsLoading, useCredit, fetchCredits } = useCredits();
   const navigate = useNavigate();
 
   // Fetch user profile
@@ -78,6 +81,23 @@ const Dashboard = () => {
     if (!isValid) {
       toast.error("Valor inválido", {
         description: "Por favor, verifique o formato do valor inserido.",
+      });
+      return;
+    }
+
+    // Check if user has credits
+    if (creditInfo && creditInfo.creditsRemaining <= 0) {
+      toast.error("Créditos insuficientes", {
+        description: "Você não tem créditos suficientes. Entre em contato para virar VIP!",
+      });
+      return;
+    }
+
+    // Use one credit
+    const creditUsed = await useCredit();
+    if (!creditUsed) {
+      toast.error("Erro ao usar crédito", {
+        description: "Não foi possível processar o crédito. Tente novamente.",
       });
       return;
     }
@@ -195,21 +215,52 @@ const Dashboard = () => {
               </p>
               
               {/* User Info Card */}
-              {user && userProfile && (
-                <div className="inline-flex items-center gap-4 glass-panel-strong px-6 py-3 rounded-xl animate-fade-in">
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-neon-purple" />
+              {user && userProfile && creditInfo && (
+                <div className="flex flex-wrap items-center justify-center gap-3 animate-fade-in">
+                  <div className="glass-panel-strong px-6 py-3 rounded-xl flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-neon-purple" />
+                      <span className="text-sm font-medium">
+                        {userProfile.display_name || user.email}
+                      </span>
+                    </div>
+                    <div className="w-px h-6 bg-border/50" />
+                    <div className="flex items-center gap-2">
+                      <IdCard className="w-4 h-4 text-neon-violet" />
+                      <span className="text-xs font-mono text-muted-foreground">
+                        ID: {user.id.slice(0, 8)}...
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Credits Display */}
+                  <div className="glass-panel-strong px-6 py-3 rounded-xl flex items-center gap-3">
+                    <Coins className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-medium">
-                      {userProfile.display_name || user.email}
+                      {creditInfo.creditsRemaining}/{creditInfo.dailyLimit} créditos
                     </span>
                   </div>
-                  <div className="w-px h-6 bg-border/50" />
-                  <div className="flex items-center gap-2">
-                    <IdCard className="w-4 h-4 text-neon-violet" />
-                    <span className="text-xs font-mono text-muted-foreground">
-                      ID: {user.id.slice(0, 8)}...
-                    </span>
-                  </div>
+
+                  {/* Role Badge */}
+                  {creditInfo.role && (
+                    <Badge 
+                      variant="outline" 
+                      className={`px-4 py-2 font-semibold ${
+                        creditInfo.role === 'owner' ? 'border-red-500 text-red-500' :
+                        creditInfo.role === 'admin' ? 'border-orange-500 text-orange-500' :
+                        creditInfo.role === 'premium' ? 'border-neon-purple text-neon-purple' :
+                        'border-muted-foreground text-muted-foreground'
+                      }`}
+                    >
+                      {creditInfo.role === 'owner' && <Crown className="w-3 h-3 mr-1" />}
+                      {creditInfo.role === 'admin' && <Crown className="w-3 h-3 mr-1" />}
+                      {creditInfo.role === 'premium' && <Crown className="w-3 h-3 mr-1" />}
+                      {creditInfo.role === 'owner' ? 'DONO' :
+                       creditInfo.role === 'admin' ? 'ADMIN' :
+                       creditInfo.role === 'premium' ? 'PREMIUM' :
+                       'COMUM'}
+                    </Badge>
+                  )}
                 </div>
               )}
               
