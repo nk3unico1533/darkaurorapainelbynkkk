@@ -50,21 +50,30 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          last_username_change: string | null
+          numeric_id: number
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          last_username_change?: string | null
+          numeric_id?: number
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          last_username_change?: string | null
+          numeric_id?: number
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -177,6 +186,10 @@ export type Database = {
         Returns: boolean
       }
       is_user_banned: { Args: { user_id: string }; Returns: boolean }
+      update_username: {
+        Args: { new_username: string; user_id: string }
+        Returns: Json
+      }
       use_credit: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
