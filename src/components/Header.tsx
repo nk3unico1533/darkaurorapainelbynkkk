@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles, User, Settings, LogOut } from "lucide-react";
+import { Sparkles, User, Settings, LogOut, Crown } from "lucide-react";
 import { SiDiscord, SiInstagram, SiTiktok } from "react-icons/si";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "./ui/button";
@@ -79,6 +79,10 @@ const Header = () => {
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <User className="w-4 h-4 mr-2" />
                     Perfil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/vip")}>
+                    <Crown className="w-4 h-4 mr-2 text-neon-purple" />
+                    Virar VIP
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/settings")}>
                     <Settings className="w-4 h-4 mr-2" />
