@@ -171,23 +171,31 @@ const Profile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Hash className="w-5 h-5 text-neon-cyan" />
-              Identificação
+              Identificação do Usuário
             </CardTitle>
+            <CardDescription>
+              Seu ID único e username no sistema
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 glass-panel rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">ID Numérico</p>
-                <p className="text-2xl font-bold gradient-text">
-                  #{numericId || "---"}
+            <div className="p-6 glass-panel rounded-lg neon-glow">
+              <p className="text-sm text-muted-foreground mb-2">Seu ID Numérico</p>
+              <div className="flex items-center gap-2">
+                <Hash className="w-8 h-8 text-neon-cyan" />
+                <p className="text-5xl font-bold gradient-text">
+                  {numericId !== null ? numericId.toString().padStart(6, "0") : "------"}
                 </p>
               </div>
-              <div className="p-4 glass-panel rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Username</p>
-                <p className="text-2xl font-bold text-foreground">
-                  @{username || "não definido"}
-                </p>
-              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                ID único e permanente (0 a 99999)
+              </p>
+            </div>
+            <div className="p-4 glass-panel rounded-lg">
+              <p className="text-sm text-muted-foreground mb-1">Username</p>
+              <p className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <User className="w-5 h-5 text-neon-purple" />
+                @{username || "não definido"}
+              </p>
             </div>
           </CardContent>
         </Card>
