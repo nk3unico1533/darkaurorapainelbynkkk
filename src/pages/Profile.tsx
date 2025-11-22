@@ -183,11 +183,11 @@ const Profile = () => {
               <div className="flex items-center gap-2">
                 <Hash className="w-8 h-8 text-neon-cyan" />
                 <p className="text-5xl font-bold gradient-text">
-                  {numericId !== null ? numericId.toString().padStart(6, "0") : "------"}
+                  {numericId !== null ? numericId : "---"}
                 </p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                ID único e permanente (0 a 99999)
+                ID único e permanente (1 a 99999)
               </p>
             </div>
             <div className="p-4 glass-panel rounded-lg">
